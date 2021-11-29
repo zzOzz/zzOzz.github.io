@@ -20,6 +20,8 @@
 
     <!--Open Graph Title-->
     
+        <meta property="og:title" content="geopip2 filter with kubernetes nginx ingress controller"/>
+    
 
     <!--Open Graph Site Name-->
     <meta property="og:site_name" content="zzOzz"/>
@@ -31,7 +33,7 @@
 
     <!-- Title -->
     
-    <title>zzOzz</title>
+    <title>geopip2 filter with kubernetes nginx ingress controller - zzOzz</title>
 
     <!-- Custom CSS -->
     
@@ -125,170 +127,41 @@
             <div class="inner">
 
                 <!-- Main Content -->
-                <header>
-    <h1>Full Stack Blog</h1>
-    <p></p>
-</header>
+                
 
-<section class="tiles">
+    <h1>geopip2 filter with kubernetes nginx ingress controller</h1>
+
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl edit ds --namespace ingress nginx-ingress-microk8s-controller -o yaml</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line marked">spec:</span><br><span class="line">  revisionHistoryLimit: 10</span><br><span class="line">  selector:</span><br><span class="line">    matchLabels:</span><br><span class="line marked">      name: nginx-ingress-microk8s</span><br><span class="line marked">  template:</span><br><span class="line marked">    metadata:</span><br><span class="line marked">      creationTimestamp: null</span><br><span class="line">      labels:</span><br><span class="line">        name: nginx-ingress-microk8s</span><br><span class="line">    spec:</span><br><span class="line">      containers:</span><br><span class="line">      - args:</span><br><span class="line">        - /nginx-ingress-controller</span><br><span class="line">        - --configmap=$(POD_NAMESPACE)/nginx-load-balancer-microk8s-conf</span><br><span class="line">        - --tcp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-tcp-microk8s-conf</span><br><span class="line">        - --udp-services-configmap=$(POD_NAMESPACE)/nginx-ingress-udp-microk8s-conf</span><br><span class="line">        - --default-backend-service=$(POD_NAMESPACE)/default-http-backend</span><br><span class="line">        - --maxmind-license-key=XXXXXXXXXXXXXX</span><br><span class="line">        - &#x27; &#x27;</span><br><span class="line">        - --publish-status-address=127.0.0.1</span><br><span class="line">        env:</span><br><span class="line">        - name: POD_NAME</span><br><span class="line">          valueFrom:</span><br><span class="line">            fieldRef:</span><br></pre></td></tr></table></figure>
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    <a href="/tags/kubernetes/" class="button small">kubernetes</a> <a href="/tags/K8s/" class="button small">K8s</a>
+</div>
+
+
+
+<!-- Comments -->
+<div>
     
-        
-
-<article class="style1">
-    <span class="image">
-        <img src="http://placehold.it/450x450" alt="" />
-    </span>
-    <a href="/2021/11/29/geopip2-filter-with-kubernetes-nginx-ingress-controller/">
-        <h2>geopip2 filter with kubernetes nginx ingress controller</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style2">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/04/27/2018-04-09-coreos-update-check/">
-        <h2>Google Update and CoreOS</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style3">
-    <span class="image">
-        <img src="http://placehold.it/450x450" alt="" />
-    </span>
-    <a href="/2018/04/27/2018-04-27-mac-os-wakeup/">
-        <h2>How to wake me up & login with ssh</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style4">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/04/06/2018-04-06-container-linux-update-operator/">
-        <h2>Container Linux Update for K8s</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style5">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/04/06/2018-04-06-k8s-job/">
-        <h2>Jobs and Cron for K8s</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style6">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/04/02/2018-04-02-k8s-certrequest/">
-        <h2>Certificate Requests with K8s</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style7">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/04/02/2018-04-02-k8s-helm/">
-        <h2>Installing Helm with RBAC</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style8">
-    <span class="image">
-        <img src="https://www.upcloud.com/support/wp-content/uploads/2016/09/kubernetes-and-coreos-logos-1.png" alt="" />
-    </span>
-    <a href="/2018/03/25/2018-03-25-install_k8/">
-        <h2>K8s with kubeadm!</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style9">
-    <span class="image">
-        <img src="https://coreos.com/sites/default/files/2017-03/etcd2-0.png" alt="" />
-    </span>
-    <a href="/2018/03/25/2018-03-25-debug_etcd/">
-        <h2>ETCD Backup & Migrate!</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-        
-
-<article class="style10">
-    <span class="image">
-        <img src="http://placehold.it/450x450" alt="" />
-    </span>
-    <a href="/2018/03/25/2018-03-25-jres-2017/">
-        <h2>JRES 2017 - CI/CD with K8s & Gitlab CI</h2>
-        <div class="content">
-            <p></p>
-        </div>
-    </a>
-</article>
-
-    
-</section>
-
-
-    <div class="pagination-container">
-        <div class="pagination disabled"><a href="/"><i class="icon fa-caret-left"></i></a></div>
-        <div class="pagination "><a href="/page/2/"><i class="icon fa-caret-right"></i></a></div>
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
     </div>
+
+
+
+</div>
 
 
 
@@ -371,7 +244,7 @@
         var dsq = document.createElement('script');
         dsq.type = 'text/javascript';
         dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
     }());
 </script>
