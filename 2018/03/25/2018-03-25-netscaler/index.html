@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="who cares">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Vincent Lombard">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="Netscaler"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="zzOzz"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>Netscaler - zzOzz</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-62317211-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/assets/img/face.jpeg" alt="" /></span><span class="title">zzOzz</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1>Netscaler</h1>
+
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<h1 id="Netscaler"><a href="#Netscaler" class="headerlink" title="Netscaler"></a>Netscaler</h1><h6 id="Exemple-de-configuration"><a href="#Exemple-de-configuration" class="headerlink" title="Exemple de configuration"></a>Exemple de configuration</h6><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add ns ip 193.49.39.52 255.255.255.128 -<span class="built_in">type</span> VIP -mgmtAccess ENABLED -hostRoute ENABLED -hostRtGw 193.49.39.1</span><br></pre></td></tr></table></figure>
+<h5 id="Content-Switching-Virtual-Server"><a href="#Content-Switching-Virtual-Server" class="headerlink" title="Content Switching - Virtual Server"></a>Content Switching - Virtual Server</h5><ul>
+<li>cs_vs_mail - (193.49.39.50) - <a href="http://mail.universite-lyon.fr" target="_blank" rel="noopener">mail.universite-lyon.fr</a></li>
+<li>cs_global - (193.49.39.51) - ksup &amp; sites web https://*.universite-lyon.fr</li>
+<li>cs_vs_mail_80 - redirection port 80 mail</li>
+<li>CS_REDIRECT_8443 (193.49.39.51) - redirect</li>
+</ul>
+<p><a href="https://listes.universite-lyon.fr:8443/" target="_blank" rel="noopener">https://listes.universite-lyon.fr:8443/</a> vers <a href="https://listes.universite-lyon.fr/mailman/" target="_blank" rel="noopener">https://listes.universite-lyon.fr/mailman</a></p>
+<h6 id="Exemple-de-configuration-1"><a href="#Exemple-de-configuration-1" class="headerlink" title="Exemple de configuration"></a>Exemple de configuration</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">#Ajout du vserver</span><br><span class="line">add cs vserver cs_vs_global SSL 193.49.39.51 443 -cltTimeout 180</span><br><span class="line">#Desactivation tls1.1 &amp; tls1.2</span><br><span class="line">set ssl vserver cs_vs_global -tls11 DISABLED -tls12 DISABLED</span><br><span class="line">#Ajout du certificat SSL</span><br><span class="line">bind ssl vserver cs_vs_global -certkeyName wildcare-universite-lyon</span><br><span class="line">#Ajout des ECC Curve par défaut (voir http://en.wikipedia.org/wiki/Elliptic_curve_cryptography)</span><br><span class="line">bind ssl vserver cs_vs_global -eccCurveName P_256</span><br><span class="line">bind ssl vserver cs_vs_global -eccCurveName P_384</span><br><span class="line">bind ssl vserver cs_vs_global -eccCurveName P_224</span><br><span class="line">bind ssl vserver cs_vs_global -eccCurveName P_521</span><br></pre></td></tr></table></figure>
+<h2 id="Commandes"><a href="#Commandes" class="headerlink" title="Commandes"></a>Commandes</h2><h5 id="Affichage-de-la-configuration"><a href="#Affichage-de-la-configuration" class="headerlink" title="Affichage de la configuration"></a>Affichage de la configuration</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">show ns ns.conf</span><br></pre></td></tr></table></figure>
+<h5 id="Bascule-en-mode-Shell"><a href="#Bascule-en-mode-Shell" class="headerlink" title="Bascule en mode Shell"></a>Bascule en mode Shell</h5><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Last login: Fri Apr 24 14:37:28 2015 from 10.20.0.1</span><br><span class="line"> Done</span><br><span class="line">Salut Vincent&gt; shell</span><br><span class="line">Copyright (c) 1992-2013 The FreeBSD Project.</span><br><span class="line">Copyright (c) 1979, 1980, 1983, 1986, 1988, 1989, 1991, 1992, 1993, 1994</span><br><span class="line">	The Regents of the University of California. All rights reserved.</span><br><span class="line"></span><br><span class="line">root@srv-netscaler01<span class="comment"># uname -a</span></span><br><span class="line">FreeBSD srv-netscaler01 8.4-NETSCALER-10.5 FreeBSD 8.4-NETSCALER-10.5 <span class="comment">#0: Thu Aug 14 04:58:23 PDT 2014     root@sjcdbldbsd8404.eng.citrite.net:/usr/obj/home/build/rs_105/usr.src/sys/NS64  amd64</span></span><br><span class="line">root@srv-netscaler01<span class="comment">#</span></span><br></pre></td></tr></table></figure>
+<h2 id="Configuration-d’une-redirection"><a href="#Configuration-d’une-redirection" class="headerlink" title="Configuration d’une redirection"></a>Configuration d’une redirection</h2><p>Comment rediriger les requêtes depuis</p>
+<p><a href="http://ediss-lyon.fr" target="_blank" rel="noopener">http://ediss-lyon.fr</a> -&gt; <a href="http://ediss.universite-lyon.fr" target="_blank" rel="noopener">http://ediss.universite-lyon.fr</a></p>
+<ul>
+<li>Création d’une “Responder Action”</li>
+</ul>
+<p><img src="/img/netscaler_responder_action.png" width="300/"></p>
+<ul>
+<li>Création d’une “Responder Policy”</li>
+</ul>
+<p><img src="/img/netscaler_responder_policy.png" width="300/"></p>
+<ul>
+<li>Binding vers le LBVS de ksup</li>
+</ul>
+<p><img src="/img/netscaler_responder_policy_binding.png" alt=""></p>
+<h3 id="Ligne-de-commande"><a href="#Ligne-de-commande" class="headerlink" title="Ligne de commande:"></a>Ligne de commande:</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">#Ajour du responder Action</span><br><span class="line">add responder action redirect_ediss_lyon_fr redirect &quot;\&quot;http://ediss.universite-lyon.fr\&quot;&quot;</span><br><span class="line"></span><br><span class="line">#Ajout du responder policy</span><br><span class="line">add responder policy redirect_ediss_lyon_fr &quot;HTTP.REQ.HOSTNAME.EQ(\&quot;ediss-lyon.fr\&quot;)&quot; redirect_ediss_lyon_fr</span><br><span class="line"></span><br><span class="line">#Bind du responder policy</span><br><span class="line">bind lb vserver vs_http -policyName redirect_ediss_lyon_fr -priority 80 -gotoPriorityExpression END -type REQUEST</span><br></pre></td></tr></table></figure>
+
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    <a href="/tags/netscaler/" class="button small">netscaler</a>
+</div>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                Who cares ?
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                    <li><a href="https://twitter.com/@__zOz__" class="icon style2 fa-twitter" target="_blank" ><span class="label">Twitter</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/zzOzz" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; zzOzz. All rights reserved</li>
+        </ul>
+    </div>
+</footer>
+
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'zzOzz';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

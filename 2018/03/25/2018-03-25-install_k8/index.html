@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="who cares">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Vincent Lombard">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="K8s with kubeadm!"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="zzOzz"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>K8s with kubeadm! - zzOzz</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-62317211-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/assets/img/face.jpeg" alt="" /></span><span class="title">zzOzz</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1>K8s with kubeadm!</h1>
+
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<p>Let’s instal kubernetes on a cluster with kubeadm on CoreOS</p>
+<h2 id="Install-cni"><a href="#Install-cni" class="headerlink" title="Install cni."></a>Install cni.</h2><p>We will use CNI/Flannel for network communication in docker.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">CNI_VERSION=&quot;v0.6.0&quot;</span><br><span class="line">mkdir -p /opt/cni/bin</span><br><span class="line">curl -L &quot;https://github.com/containernetworking/plugins/releases/download/$&#123;CNI_VERSION&#125;/cni-plugins-amd64-$&#123;CNI_VERSION&#125;.tgz&quot; | tar -C /opt/cni/bin -xz</span><br></pre></td></tr></table></figure>
+<h2 id="Install-K8s-binaries"><a href="#Install-K8s-binaries" class="headerlink" title="Install K8s binaries."></a>Install K8s binaries.</h2><p>We will install the latest version of Kubernetes (1.10 at the time).<br>All binaries will be in /opt/bin folder.<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">RELEASE=&quot;$(curl -sSL https://dl.k8s.io/release/stable.txt)&quot;</span><br><span class="line">mkdir -p /opt/bin</span><br><span class="line">cd /opt/bin</span><br><span class="line">curl -L --remote-name-all https://storage.googleapis.com/kubernetes-release/release/$&#123;RELEASE&#125;/bin/linux/amd64/&#123;kubeadm,kubelet,kubectl&#125;</span><br><span class="line">chmod +x &#123;kubeadm,kubelet,kubectl&#125;</span><br><span class="line">curl -sSL &quot;https://raw.githubusercontent.com/kubernetes/kubernetes/$&#123;RELEASE&#125;/build/debs/kubelet.service&quot; | sed &quot;s:/usr/bin:/opt/bin:g&quot; &gt; /etc/systemd/system/kubelet.service</span><br><span class="line">mkdir -p /etc/systemd/system/kubelet.service.d</span><br><span class="line">curl -sSL &quot;https://raw.githubusercontent.com/kubernetes/kubernetes/$&#123;RELEASE&#125;/build/debs/10-kubeadm.conf&quot; | sed &quot;s:/usr/bin:/opt/bin:g&quot; &gt; /etc/systemd/system/kubelet.service.d/10-kubeadm.conf</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl cat kubelet</span><br><span class="line">systemctl start kubelet</span><br><span class="line">journalctl -f -u kubelet</span><br></pre></td></tr></table></figure></p>
+<h2 id="Config-map-for-kubeadm"><a href="#Config-map-for-kubeadm" class="headerlink" title="Config-map for kubeadm"></a>Config-map for kubeadm</h2><p>If you want to install K8s inside your etcd3 cluster, you must create a configmap for kubeadm note the podSubnet required for flannel.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">cat &gt;config-kubeadm.yaml &lt;&lt;EOF</span><br><span class="line">apiVersion: kubeadm.k8s.io/v1alpha1</span><br><span class="line">kind: MasterConfiguration</span><br><span class="line">api:</span><br><span class="line">  advertiseAddress: srv-coreos-05</span><br><span class="line">etcd:</span><br><span class="line">  endpoints:</span><br><span class="line">  - https://srv-coreos-01:2379</span><br><span class="line">  - https://srv-coreos-02:2379</span><br><span class="line">  - https://srv-coreos-03:2379</span><br><span class="line">  - https://srv-coreos-04:2379</span><br><span class="line">  - https://srv-coreos-05:2379</span><br><span class="line">  caFile: /etc/ssl/ca.pem</span><br><span class="line">  certFile: /etc/ssl/server.pem</span><br><span class="line">  keyFile: /etc/ssl/server-key.pem</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: 10.244.0.0/16</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>You can also install an internal etcd3 server (only one node.)<br>This time, your can change the folder where etcd3 data will be written (DO NOT USE AN EXISTING FOLDER !!! if you’ve got an existing etcd cluster)<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">apiVersion: kubeadm.k8s.io/v1alpha1</span><br><span class="line">kind: MasterConfiguration</span><br><span class="line">api:</span><br><span class="line">  advertiseAddress: srv-coreos-05</span><br><span class="line">  bindport: 6443</span><br><span class="line">etcd:</span><br><span class="line">  dataDir: /var/lib/etcd-kubernetes</span><br><span class="line">networking:</span><br><span class="line">  podSubnet: 10.244.0.0/16</span><br></pre></td></tr></table></figure></p>
+<h2 id="Start-Kubeadm-init"><a href="#Start-Kubeadm-init" class="headerlink" title="Start Kubeadm init"></a>Start Kubeadm init</h2><p>Now you can use this file to start installing your K8s</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --config=config-kubeadm.yaml</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">cp -i /etc/kubernetes/admin.conf $HOME/.kube/config</span><br><span class="line">~~~  </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">## Check ETCD</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">You can check internal etcd status.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>export ETCDCTL_API=2<br>export ETCDCTL_CA_FILE=/etc/kubernetes/pki/etcd/ca.crt<br>export ETCDCTL_CERT_FILE=/etc/kubernetes/pki/etcd/peer.crt<br>export ETCDCTL_KEY_FILE=/etc/kubernetes/pki/etcd/peer.key<br>etcdctl cluster-health<br>export ETCDCTL_API=3<br>export ETCDCTL_CACERT=/etc/kubernetes/pki/etcd/ca.crt<br>export ETCDCTL_CERT=/etc/kubernetes/pki/etcd/peer.crt<br>export ETCDCTL_ENDPOINTS=<a target="_blank" rel="noopener" href="https://localhost:2379">https://localhost:2379</a><br>export ETCDCTL_KEY=/etc/kubernetes/pki/etcd/peer.key<br>etcdctl endpoint status<br>etcdctl endpoint health<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Even make a backup.</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>ETCDCTL_API=3<br>etcdctl snapshot save /root/snapshot_$(date +”%Y%m%d_%HH%MM”).db<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## install cert on mac</span><br><span class="line"></span><br><span class="line">You can install certificate for the new Cluster.</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>ssh srv-coreos-01 sudo cat /etc/kubernetes/admin.conf |grep certificate-authority-data|cut -d “ “ -f6|base64 -D &gt; ~/.kube/certificate-authority-data.crt<br>ssh srv-coreos-01 sudo cat /etc/kubernetes/admin.conf |grep client-certificate-data|cut -d “ “ -f6|base64 -D &gt; ~/.kube/client-certificate-data.crt<br>ssh srv-coreos-01 sudo cat /etc/kubernetes/admin.conf |grep client-key-data|cut -d “ “ -f6|base64 -D &gt; ~/.kube/client-key-data.crt<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Use this &#x27;~/.kube/config&#x27; file or add the correct config to your existing config.</span><br></pre></td></tr></table></figure><br>apiVersion: v1<br>kind: Config<br>clusters:</p>
+<ul>
+<li>cluster:<br>  certificate-authority: certificate-authority-data.crt<br>  server: <a target="_blank" rel="noopener" href="https://172.16.17.248:6443">https://172.16.17.248:6443</a><br>name: kubernetes-coreos-production<br>contexts:</li>
+<li>context:<br>  cluster: kubernetes-coreos-production<br>  namespace: default<br>  user: kubernetes-admin<br>name: kubernetes-admin@kubernetes<br>current-context: kubernetes-admin@kubernetes<br>users:</li>
+<li>name: kubernetes-admin<br>user:<br>  client-certificate: client-certificate-data.crt<br>  client-key: client-key-data.crt</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## Install Flannel CNI_VERSION</span><br><span class="line"></span><br><span class="line">You must install the flannel DaemonSet &amp; RBAC in order to permit communication betweens pods inside cluster.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>kubectl apply -f <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml">https://raw.githubusercontent.com/coreos/flannel/v0.9.1/Documentation/kube-flannel.yml</a><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">## Untain master node</span><br><span class="line"></span><br><span class="line">If you want to run some pods on the master you must Untain it.</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>kubectl taint node srv-coreos-05 node-role.kubernetes.io/master-</p>
+<h1 id="you-can-reverse-this-with-kubectl-taint-node-srv-coreos-05-node-role-kubernetes-io-master-true-NoSchedule"><a href="#you-can-reverse-this-with-kubectl-taint-node-srv-coreos-05-node-role-kubernetes-io-master-true-NoSchedule" class="headerlink" title="you can reverse this with: kubectl taint node srv-coreos-05 node-role.kubernetes.io/master=true:NoSchedule"></a>you can reverse this with: kubectl taint node srv-coreos-05 node-role.kubernetes.io/master=true:NoSchedule</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## dashboard</span><br><span class="line"></span><br><span class="line">What about installing the kubernetes dashboard to check if our installation works.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>kubectl apply -f <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml">https://raw.githubusercontent.com/kubernetes/dashboard/master/src/deploy/recommended/kubernetes-dashboard.yaml</a><br>kubectl proxy<br>open <a target="_blank" rel="noopener" href="http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/">http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/</a><br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### Create User token</span><br><span class="line"></span><br><span class="line">In order to connect, you have to create a user token.</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h2 id="Copy-this-and"><a href="#Copy-this-and" class="headerlink" title="Copy this and"></a>Copy this and</h2><h2 id="pbpaste-kubectl-create-f"><a href="#pbpaste-kubectl-create-f" class="headerlink" title="pbpaste | kubectl create -f -"></a>pbpaste | kubectl create -f -</h2><p>apiVersion: v1<br>kind: ServiceAccount<br>metadata:<br>  name: admin-user<br>  namespace: kube-system<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h2 id="Copy-this-and-1"><a href="#Copy-this-and-1" class="headerlink" title="Copy this and"></a>Copy this and</h2><h2 id="pbpaste-kubectl-create-f-1"><a href="#pbpaste-kubectl-create-f-1" class="headerlink" title="pbpaste | kubectl create -f -"></a>pbpaste | kubectl create -f -</h2><p>apiVersion: rbac.authorization.k8s.io/v1beta1<br>kind: ClusterRoleBinding<br>metadata:<br>  name: admin-user<br>roleRef:<br>  apiGroup: rbac.authorization.k8s.io<br>  kind: ClusterRole<br>  name: cluster-admin<br>subjects:</p>
+<ul>
+<li>kind: ServiceAccount<br>name: admin-user<br>namespace: kube-system<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">You can now retrieve the token</span><br></pre></td></tr></table></figure>
+kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk ‘{print $1}’)<h2 id="kubectl-n-kube-system-describe-secret-kubectl-n-kube-system-get-secret-grep-admin-user-awk-‘-print-1-’-grep-“-token”-cut-d-“-”-f2-sed-‘s-g’-pbcopy"><a href="#kubectl-n-kube-system-describe-secret-kubectl-n-kube-system-get-secret-grep-admin-user-awk-‘-print-1-’-grep-“-token”-cut-d-“-”-f2-sed-‘s-g’-pbcopy" class="headerlink" title="kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk ‘{print $1}’)|grep “^token”|cut -d “:” -f2|sed ‘s/ //g’|pbcopy"></a>kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep admin-user | awk ‘{print $1}’)|grep “^token”|cut -d “:” -f2|sed ‘s/ //g’|pbcopy</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## Ingress</span><br><span class="line"></span><br><span class="line">I&#x27;d like to use nginx implementation of ingress</span><br><span class="line"></span><br><span class="line">[cf](https://github.com/kubernetes/ingress-nginx/tree/master/deploy)</span><br><span class="line"></span><br><span class="line">So let&#x27;s go.</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">First step the config.</span><br></pre></td></tr></table></figure>
+curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/namespace.yaml</a> \<br>  | kubectl apply -f -</li>
+</ul>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/default-backend.yaml</a> \<br>    | kubectl apply -f -</p>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/configmap.yaml</a> \<br>    | kubectl apply -f -</p>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/tcp-services-configmap.yaml</a> \<br>    | kubectl apply -f -</p>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/udp-services-configmap.yaml</a> \<br>    | kubectl apply -f -<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">And service.</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/provider/baremetal/service-nodeport.yaml</a> \<br>    | kubectl apply -f -</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Now RBAC &amp; Deployment.</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/rbac.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/rbac.yaml</a> \<br>    | kubectl apply -f -</p>
+<p>curl <a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/with-rbac.yaml">https://raw.githubusercontent.com/kubernetes/ingress-nginx/master/deploy/with-rbac.yaml</a> \<br>    | kubectl apply -f -<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### DaemonSet instead of Deployment for nginx</span><br><span class="line"></span><br><span class="line">If you want to run nginx on all nodes you must replace nginx deployment with a DaemonSet.</span><br><span class="line"></span><br><span class="line">ex:</span><br></pre></td></tr></table></figure><br>apiVersion: extensions/v1beta1<br>kind: DaemonSet<br>metadata:<br>  annotations:<br>    deployment.kubernetes.io/revision: “1”<br>    kubectl.kubernetes.io/last-applied-configuration: |<br>      {“apiVersion”:”extensions/v1beta1”,”kind”:”DaemonSet”,”metadata”:{“annotations”:{“deployment.kubernetes.io/revision”:”1”},”labels”:{“app”:”ingress-nginx”},”name”:”nginx-ingress-controller”,”namespace”:”ingress-nginx”},”spec”:{“selector”:{“matchLabels”:{“app”:”ingress-nginx”}},”template”:{“metadata”:{“annotations”:{“prometheus.io/port”:”10254”,”prometheus.io/scrape”:”true”},”labels”:{“app”:”ingress-nginx”}},”spec”:{“containers”:[{“args”:[“/nginx-ingress-controller”,”–default-backend-service=$(POD_NAMESPACE)/default-http-backend”,”–configmap=$(POD_NAMESPACE)/nginx-configuration”,”–tcp-services-configmap=$(POD_NAMESPACE)/tcp-services”,”–udp-services-configmap=$(POD_NAMESPACE)/udp-services”,”–annotations-prefix=nginx.ingress.kubernetes.io”],”env”:[{“name”:”POD_NAME”,”valueFrom”:{“fieldRef”:{“apiVersion”:”v1”,”fieldPath”:”metadata.name”}}},{“name”:”POD_NAMESPACE”,”valueFrom”:{“fieldRef”:{“apiVersion”:”v1”,”fieldPath”:”metadata.namespace”}}}],”image”:”quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.12.0”,”imagePullPolicy”:”IfNotPresent”,”livenessProbe”:{“failureThreshold”:3,”httpGet”:{“path”:”/healthz”,”port”:10254,”scheme”:”HTTP”},”initialDelaySeconds”:10,”periodSeconds”:10,”successThreshold”:1,”timeoutSeconds”:1},”name”:”nginx-ingress-controller”,”ports”:[{“containerPort”:80,”name”:”http”,”protocol”:”TCP”},{“containerPort”:443,”name”:”https”,”protocol”:”TCP”}],”readinessProbe”:{“failureThreshold”:3,”httpGet”:{“path”:”/healthz”,”port”:10254,”scheme”:”HTTP”},”periodSeconds”:10,”successThreshold”:1,”timeoutSeconds”:1},”resources”:{},”terminationMessagePath”:”/dev/termination-log”,”terminationMessagePolicy”:”File”}],”dnsPolicy”:”ClusterFirst”,”restartPolicy”:”Always”,”schedulerName”:”default-scheduler”,”securityContext”:{},”serviceAccount”:”nginx-ingress-serviceaccount”,”serviceAccountName”:”nginx-ingress-serviceaccount”,”terminationGracePeriodSeconds”:30}}}}<br>  labels:<br>    app: ingress-nginx<br>  name: nginx-ingress-controller<br>  namespace: ingress-nginx<br>spec:<br>  revisionHistoryLimit: 10<br>  selector:<br>    matchLabels:<br>      app: ingress-nginx<br>  template:<br>    metadata:<br>      annotations:<br>        prometheus.io/port: “10254”<br>        prometheus.io/scrape: “true”<br>      creationTimestamp: null<br>      labels:<br>        app: ingress-nginx<br>    spec:<br>      containers:</p>
+<pre><code>- args:
+  - /nginx-ingress-controller
+  - --default-backend-service=$(POD_NAMESPACE)/default-http-backend
+  - --configmap=$(POD_NAMESPACE)/nginx-configuration
+  - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
+  - --udp-services-configmap=$(POD_NAMESPACE)/udp-services
+  - --annotations-prefix=nginx.ingress.kubernetes.io
+  env:
+  - name: POD_NAME
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.name
+  - name: POD_NAMESPACE
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: metadata.namespace
+  image: quay.io/kubernetes-ingress-controller/nginx-ingress-controller:0.12.0
+  imagePullPolicy: IfNotPresent
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /healthz
+      port: 10254
+      scheme: HTTP
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  name: nginx-ingress-controller
+  ports:
+  - containerPort: 80
+    name: http
+    protocol: TCP
+  - containerPort: 443
+    name: https
+    protocol: TCP
+  readinessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /healthz
+      port: 10254
+      scheme: HTTP
+    periodSeconds: 10
+    successThreshold: 1
+    timeoutSeconds: 1
+  resources: &#123;&#125;
+  terminationMessagePath: /dev/termination-log
+  terminationMessagePolicy: File
+dnsPolicy: ClusterFirst
+restartPolicy: Always
+schedulerName: default-scheduler
+securityContext: &#123;&#125;
+serviceAccount: nginx-ingress-serviceaccount
+serviceAccountName: nginx-ingress-serviceaccount
+terminationGracePeriodSeconds: 30
+</code></pre><p>  templateGeneration: 2<br>  updateStrategy:<br>    type: OnDelete<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">If you need to use 80 &amp; 443 ports for Ingress (you should ;-)</span><br><span class="line"></span><br><span class="line">You have to enable service-node-port -&gt; 80 by editing kube-apiserver.yaml and adding &quot;- --service-node-port-range=80-32767&quot;</span><br><span class="line">and change the service ports.</span><br></pre></td></tr></table></figure></p>
+<h1 id="add-–service-node-port-range-80-32767"><a href="#add-–service-node-port-range-80-32767" class="headerlink" title="add    - –service-node-port-range=80-32767"></a>add    - –service-node-port-range=80-32767</h1><p>vi /etc/kubernetes/manifests/kube-apiserver.yaml</p>
+<h1 id="edit-nodePort-gt-443-amp-80"><a href="#edit-nodePort-gt-443-amp-80" class="headerlink" title="edit nodePort -&gt; 443 &amp; 80"></a>edit nodePort -&gt; 443 &amp; 80</h1><p>kubectl edit service –namespace ingress-nginx ingress-nginx<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">### Old TLS settings for nginx</span><br><span class="line"></span><br><span class="line">If you have to support OLD TLS settings (old browsers or Reverse-Proxy)</span><br><span class="line"></span><br><span class="line">[cf](https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/tls.md)</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>kubectl edit configmap –namespace ingress-nginx nginx-configuration<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">Use this.</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>kind: ConfigMap<br>apiVersion: v1<br>metadata:<br>  name: nginx-configuration<br>data:<br>  ssl-ciphers: “ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-AES256-GCM-SHA384:DHE-RSA-AES128-GCM-SHA256:DHE-DSS-AES128-GCM-SHA256:kEDH+AESGCM:ECDHE-RSA-AES128-SHA256:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA:ECDHE-ECDSA-AES128-SHA:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA:ECDHE-ECDSA-AES256-SHA:DHE-RSA-AES128-SHA256:DHE-RSA-AES128-SHA:DHE-DSS-AES128-SHA256:DHE-RSA-AES256-SHA256:DHE-DSS-AES256-SHA:DHE-RSA-AES256-SHA:AES128-GCM-SHA256:AES256-GCM-SHA384:AES128-SHA256:AES256-SHA256:AES128-SHA:AES256-SHA:AES:CAMELLIA:DES-CBC3-SHA:!aNULL:!eNULL:!EXPORT:!DES:!RC4:!MD5:!PSK:!aECDH:!EDH-DSS-DES-CBC3-SHA:!EDH-RSA-DES-CBC3-SHA:!KRB5-DES-CBC3-SHA”<br>  ssl-protocols: “TLSv1 TLSv1.1 TLSv1.2”<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"></span><br><span class="line">## Add a new node</span><br><span class="line"></span><br><span class="line">On the master</span><br></pre></td></tr></table></figure><br>kubeadm token create –print-join-command<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">On the node</span><br><span class="line">* Install CNI</span><br><span class="line">* Install binaries</span><br><span class="line">* Configure the kubelet service</span><br><span class="line">* run the join command</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>CNI_VERSION=”v0.6.0”<br>mkdir -p /opt/cni/bin<br>curl -L “<a target="_blank" rel="noopener" href="https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-amd64-${CNI_VERSION}.tgz&quot;">https://github.com/containernetworking/plugins/releases/download/${CNI_VERSION}/cni-plugins-amd64-${CNI_VERSION}.tgz&quot;</a> | tar -C /opt/cni/bin -xz<br>RELEASE=”$(curl -sSL <a target="_blank" rel="noopener" href="https://dl.k8s.io/release/stable.txt)&quot;">https://dl.k8s.io/release/stable.txt)&quot;</a><br>RELEASE=”v1.14.1”<br>mkdir -p /opt/bin<br>cd /opt/bin<br>curl -L –remote-name-all <a target="_blank" rel="noopener" href="https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}">https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/amd64/{kubeadm,kubelet,kubectl}</a><br>chmod +x {kubeadm,kubelet,kubectl}<br>curl -sSL “<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service&quot;">https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/kubelet.service&quot;</a> | sed “s:/usr/bin:/opt/bin:g” &gt; /etc/systemd/system/kubelet.service<br>mkdir -p /etc/systemd/system/kubelet.service.d<br>curl -sSL “<a target="_blank" rel="noopener" href="https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf&quot;">https://raw.githubusercontent.com/kubernetes/kubernetes/${RELEASE}/build/debs/10-kubeadm.conf&quot;</a> | sed “s:/usr/bin:/opt/bin:g” &gt; /etc/systemd/system/kubelet.service.d/10-kubeadm.conf<br>kubeadm join –token xxxxxx.xxxxyyyyzzzzxxxx 172.16.17.248:6443 –discovery-token-ca-cert-hash sha256:myverylongtoken<br>systemctl daemon-reload<br>systemctl cat kubelet<br>systemctl start kubelet<br>journalctl -f -u kubelet<br>~~~</p>
+
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    <a href="/tags/k8s/" class="button small">k8s</a> <a href="/tags/kubernetes/" class="button small">kubernetes</a> <a href="/tags/kubeadm/" class="button small">kubeadm</a> <a href="/tags/coreos/" class="button small">coreos</a>
+</div>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                Who cares ?
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                    <li><a href="https://twitter.com/@__zOz__" class="icon style2 fa-twitter" target="_blank" ><span class="label">Twitter</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/zzOzz" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; zzOzz. All rights reserved</li>
+        </ul>
+    </div>
+</footer>
+
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'zzOzz';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>

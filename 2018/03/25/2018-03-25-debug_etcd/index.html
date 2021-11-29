@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--Description-->
+    
+        <meta name="description" content="who cares">
+    
+
+    <!--Author-->
+    
+        <meta name="author" content="Vincent Lombard">
+    
+
+    <!--Open Graph Title-->
+    
+        <meta property="og:title" content="ETCD Backup &amp; Migrate!"/>
+    
+
+    <!--Open Graph Site Name-->
+    <meta property="og:site_name" content="zzOzz"/>
+
+    <!--Page Cover-->
+    
+        <meta property="og:image" content=""/>
+    
+
+    <!-- Title -->
+    
+    <title>ETCD Backup &amp; Migrate! - zzOzz</title>
+
+    <!-- Custom CSS -->
+    
+<link rel="stylesheet" href="/sass/main.css">
+
+
+    <!--[if lt IE 8]>
+        
+<script src="/js/ie/html5shiv.js"></script>
+
+    <![endif]-->
+
+    <!--[if lt IE 8]>
+        
+<link rel="stylesheet" href="/sass/ie8.css">
+
+    <![endif]-->
+
+    <!--[if lt IE 9]>
+        
+<link rel="stylesheet" href="/sass/ie9.css">
+
+    <![endif]-->
+
+    <!-- Gallery -->
+    <link href="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.css" type="text/css" rel="stylesheet" />
+
+    <!-- Google Analytics -->
+    
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-62317211-2', 'auto');
+        ga('send', 'pageview');
+
+    </script>
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+
+    <div id="wrapper">
+
+        <!-- Menu -->
+        <!-- Header -->
+<header id="header">
+    <div class="inner">
+
+        <!-- Logo -->
+        <a href="/" class="logo">
+            <span class="symbol"><img src="/assets/img/face.jpeg" alt="" /></span><span class="title">zzOzz</span>
+        </a>
+
+        <!-- Nav -->
+        <nav>
+            <ul>
+                <li><a href="#menu">Menu</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+<!-- Menu -->
+<nav id="menu">
+    <h2>Menu</h2>
+    <ul>
+        
+            <li>
+                <a href="/">Home</a>
+            </li>
+        
+            <li>
+                <a href="/archives">Archives</a>
+            </li>
+        
+            <li>
+                <a href="/about.html">About</a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+        <div id="main">
+            <div class="inner">
+
+                <!-- Main Content -->
+                
+
+    <h1>ETCD Backup & Migrate!</h1>
+
+
+
+<!-- Gallery -->
+
+
+<!-- Content -->
+<p>CoreOS starts etcd with rkt.</p>
+<p>SSL certs are shared in /etc/ssl/certs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/usr/bin/rkt run --uuid-file-save=/var/lib/coreos/etcd-member-wrapper.uuid</span><br><span class="line">--trust-keys-from-https</span><br><span class="line">--mount volume=coreos-systemd-dir,target=/run/systemd/system</span><br><span class="line">--volume coreos-systemd-dir,kind=host,source=/run/systemd/system,readOnly=true</span><br><span class="line">--mount volume=coreos-notify,target=/run/systemd/notify</span><br><span class="line">--volume coreos-notify,kind=host,source=/run/systemd/notify</span><br><span class="line">--set-env=NOTIFY_SOCKET=/run/systemd/notify</span><br><span class="line">--volume coreos-data-dir,kind=host,source=/var/lib/etcd,readOnly=false</span><br><span class="line">--volume coreos-etc-ssl-certs,kind=host,source=/etc/ssl/certs,readOnly=true</span><br><span class="line">--volume coreos-usr-share-certs,kind=host,source=/usr/share/ca-certificates,</span><br><span class="line">readOnly=true --volume coreos-etc-hosts,</span><br><span class="line">kind=host,source=/etc/hosts,readOnly=true</span><br><span class="line">--volume coreos-etc-resolv,kind=host,source=/etc/resolv.conf,readOnly=true</span><br><span class="line">--mount volume=coreos-data-dir,target=/var/lib/etcd</span><br><span class="line">--mount volume=coreos-etc-ssl-certs,target=/etc/ssl/certs</span><br><span class="line">--mount volume=coreos-usr-share-certs,target=/usr/share/ca-certificates</span><br><span class="line">--mount volume=coreos-etc-hosts,target=/etc/hosts</span><br><span class="line">--mount volume=coreos-etc-resolv,target=/etc/resolv.conf</span><br><span class="line">--inherit-env --stage1-from-dir=stage1-fly.aci quay.io/coreos/etcd:v3.2.15 --user=232 --</span><br></pre></td></tr></table></figure>
+<h2 id="Init-from-etcd2-backup"><a href="#Init-from-etcd2-backup" class="headerlink" title="Init from etcd2_backup"></a>Init from etcd2_backup</h2><p>When you’ve got an etcd2 backup you can test it with ‘–force-new-cluster’ option.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd2:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v2.3.8 \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 -force-new-cluster \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state new</span><br></pre></td></tr></table></figure>
+<h2 id="Change-peerURLs"><a href="#Change-peerURLs" class="headerlink" title="Change peerURLs"></a>Change peerURLs</h2><p>You can change peerURLs to match your Server.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl http://127.0.0.1:2379/v2/members/$(curl -s http://127.0.0.1:2379/v2/members | jq -r .members[0].id) -XPUT -H &quot;Content-Type: application/json&quot; -d &apos;&#123;&quot;peerURLs&quot;:[&quot;http://10.30.0.49:2380&quot;]&#125;&apos;</span><br><span class="line">curl -s http://127.0.0.1:2379/v2/members | jq .</span><br></pre></td></tr></table></figure>
+<h2 id="Normal-etcd2-running"><a href="#Normal-etcd2-running" class="headerlink" title="Normal etcd2 running"></a>Normal etcd2 running</h2><p>You can now start the backup normally</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd2:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v2.3.8 \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state existing</span><br></pre></td></tr></table></figure>
+<h2 id="backup-v2"><a href="#backup-v2" class="headerlink" title="backup v2"></a>backup v2</h2><p>You can make a backup with this command (etcd2 not etcd3 keys)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec etcd /etcdctl backup --data-dir /var/lib/etcd --backup-dir /var/lib/etcd/backup</span><br></pre></td></tr></table></figure>
+<h2 id="Test-migration-3-0"><a href="#Test-migration-3-0" class="headerlink" title="Test migration 3.0"></a>Test migration 3.0</h2><p>Let’s start migration with 3.0</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd2:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v3.0.17 \</span><br><span class="line"> etcd \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state existing</span><br></pre></td></tr></table></figure>
+<h2 id="backup-v3"><a href="#backup-v3" class="headerlink" title="backup v3"></a>backup v3</h2><p>Let’s backup this version.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker exec etcd etcdctl backup --data-dir /var/lib/etcd --backup-dir /var/lib/etcd/backup</span><br></pre></td></tr></table></figure>
+<h2 id="Test-migration-3-1"><a href="#Test-migration-3-1" class="headerlink" title="Test migration 3.1"></a>Test migration 3.1</h2><p>Let’s start migration with 3.1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd2:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v3.1.12 \</span><br><span class="line"> etcd \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state existing</span><br></pre></td></tr></table></figure>
+<h2 id="check-amp-backup"><a href="#check-amp-backup" class="headerlink" title="check &amp; backup"></a>check &amp; backup</h2><p>This this you can backup etcd3 key (note the ETCDCTL_API=3 to play with v3 api)</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">docker exec -e ETCDCTL_API=3 etcd etcdctl endpoint health</span><br><span class="line">docker exec -e ETCDCTL_API=3 etcd etcdctl snapshot save /var/lib/etcd/backup.db</span><br><span class="line">docker exec -e ETCDCTL_API=2 etcd etcdctl cluster-health</span><br><span class="line">docker exec etcd etcdctl backup --data-dir /var/lib/etcd --backup-dir /var/lib/etcd/backup</span><br></pre></td></tr></table></figure>
+<h2 id="Test-resto-3-1"><a href="#Test-resto-3-1" class="headerlink" title="Test resto 3.1"></a>Test resto 3.1</h2><p>Let’s check our Backup on a new cluster.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v3.1.12 \</span><br><span class="line"> etcd -force-new-cluster \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state new</span><br></pre></td></tr></table></figure>
+<p>Let’s restart our Backup normally.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v3.1.12 \</span><br><span class="line"> etcd \</span><br><span class="line"> --snapshot-count &apos;1&apos; \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state existing</span><br></pre></td></tr></table></figure>
+<h2 id="Test-migration-3-2"><a href="#Test-migration-3-2" class="headerlink" title="Test migration 3.2"></a>Test migration 3.2</h2><p>Time to migrate to 3.2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">docker run --rm -v /Users/vincent/Documents/dev/default.etcd/var/lib/etcd:/var/lib/etcd -p 4001:4001 -p 2380:2380 -p 2379:2379 \</span><br><span class="line"> --name etcd quay.io/coreos/etcd:v3.2.15 \</span><br><span class="line"> etcd \</span><br><span class="line"> -data-dir /var/lib/etcd \</span><br><span class="line"> -name etcd0 \</span><br><span class="line"> -advertise-client-urls http://10.30.0.49:2379,http://10.30.0.49:4001 \</span><br><span class="line">-listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \</span><br><span class="line">-initial-advertise-peer-urls http://10.30.0.49:2380 \</span><br><span class="line">-listen-peer-urls http://0.0.0.0:2380 \</span><br><span class="line">-initial-cluster-token mac-cluster \</span><br><span class="line">-initial-cluster etcd0=http://10.30.0.49:2380 \</span><br><span class="line">-initial-cluster-state existing</span><br></pre></td></tr></table></figure>
+<h2 id="check-member-urls"><a href="#check-member-urls" class="headerlink" title="check member urls"></a>check member urls</h2><p>You can check your cluster member’s url.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">etcdctl member list</span><br><span class="line">6243ee957501: name=srv-coreos-pp02 peerURLs=http://localhost:2380 clientURLs=https://srv-coreos-pp02:2379 isLeader=true</span><br><span class="line"></span><br><span class="line">curl -k -s https://127.0.0.1:2379/v2/members | jq .</span><br></pre></td></tr></table></figure>
+<h2 id="change-member-urls"><a href="#change-member-urls" class="headerlink" title="change member urls"></a>change member urls</h2><p>If something’s wrong, let’s change urls.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -s -k https://127.0.0.1:2379/v2/members/$(curl -k -s https://127.0.0.1:2379/v2/members | jq -r .members[0].id) -XPUT -H &quot;Content-Type: application/json&quot; -d &apos;&#123;&quot;peerURLs&quot;:[&quot;https://srv-coreos-pp02:2380&quot;]&#125;&apos;</span><br></pre></td></tr></table></figure>
+<h2 id="Adding-new-node"><a href="#Adding-new-node" class="headerlink" title="Adding new node"></a>Adding new node</h2><p>You can add members to cluster.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">etcdctl member add srv-coreos-pp01 https://srv-coreos-pp01:2380</span><br><span class="line">etcdctl member add srv-coreos-pp03 https://srv-coreos-pp03:2380</span><br><span class="line">etcdctl member add srv-coreos-pp04 https://srv-coreos-pp04:2380</span><br><span class="line">etcdctl member add srv-coreos-pp05 https://srv-coreos-pp05:2380</span><br></pre></td></tr></table></figure>
+<h2 id="modify-etcd-config"><a href="#modify-etcd-config" class="headerlink" title="modify etcd-config"></a>modify etcd-config</h2><p>Then you change the etcd config file to match cluster urls.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vi /etc/systemd/system/etcd-member.service.d/20-cloudinit.conf</span><br><span class="line">systemctl disable etcd2</span><br><span class="line">systemctl enable etcd-member</span><br><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl stop etcd-member</span><br><span class="line">systemctl start etcd-member</span><br></pre></td></tr></table></figure>
+<h2 id="backup-etcd2-without-etcdctl"><a href="#backup-etcd2-without-etcdctl" class="headerlink" title="backup etcd2 without etcdctl"></a>backup etcd2 without etcdctl</h2><p>You’ve got docker, why on earth should you install software!</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -v /var/lib/etcd:/var/lib/etcd --rm -ti --entrypoint=&quot;/etcdctl&quot; quay.io/coreos/etcd:v2.3.8 backup --data-dir /var/lib/etcd --backup-dir /var/lib/etcd/backup</span><br></pre></td></tr></table></figure>
+
+
+<!-- Tags -->
+
+
+
+<div class="tags">
+    <a href="/tags/coreos/" class="button small">coreos</a> <a href="/tags/etcd/" class="button small">etcd</a>
+</div>
+
+
+
+<!-- Comments -->
+<div>
+    
+    <hr />
+    <h3>Comments:</h3>
+    <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+    </div>
+
+
+
+</div>
+
+
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+<footer id="footer">
+    <div class="inner">
+        <section>
+            <h2>About</h2>
+            <div>
+                Who cares ?
+            </div>
+        </section>
+        <section>
+            <h2>Follow</h2>
+            <ul class="icons">
+                
+                    <li><a href="https://twitter.com/@__zOz__" class="icon style2 fa-twitter" target="_blank" ><span class="label">Twitter</span></a></li>
+                
+                
+                
+                
+                
+                    <li><a href="https://github.com/zzOzz" class="icon style2 fa-github" target="_blank" ><span class="label">GitHub</span></a></li>
+                
+                
+                
+                
+                
+                
+            </ul>
+        </section>
+        <ul class="copyright">
+            <li>&copy; zzOzz. All rights reserved</li>
+        </ul>
+    </div>
+</footer>
+
+    </div>
+
+    <!-- After footer scripts -->
+    
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- skel -->
+
+<script src="/js/skel.min.js"></script>
+
+
+<!-- Custom Code -->
+
+<script src="/js/util.js"></script>
+
+
+<!--[if lte IE 8]>
+
+<script src="/js/ie/respond.min.js"></script>
+
+<![endif]-->
+
+<!-- Custom Code -->
+
+<script src="/js/main.js"></script>
+
+
+<!-- Gallery -->
+<script src="//cdn.rawgit.com/noelboss/featherlight/1.3.5/release/featherlight.min.js" type="text/javascript" charset="utf-8"></script>
+
+<!-- Disqus Comments -->
+
+<script type="text/javascript">
+    var disqus_shortname = 'zzOzz';
+
+    (function(){
+        var dsq = document.createElement('script');
+        dsq.type = 'text/javascript';
+        dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+</body>
+
+</html>
